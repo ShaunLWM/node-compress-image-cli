@@ -33,6 +33,10 @@ Note: Please use forward slashes, *not* backslashes. Enclose the directory in ap
     -es, --enginesvg        Type of engine to use for svg compression [svgo,imagemagick] (Use multiple with "+")
     -eg, --enginegif        Type of engine to use for gif compression [gifsicle,giflossy,gif2webp,imagemagick] (Use multiple with "+")
 
+## Related
+
+- [compress-images](https://www.npmjs.com/package/compress-images) - API for this module
+
 ## License
 
 [MIT](LICENSE)

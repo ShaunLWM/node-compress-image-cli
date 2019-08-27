@@ -1,55 +1,110 @@
 #!/usr/bin/env node
 
-const program = require('commander');
-const compress_images = require('compress-images');
+const meow = require("meow");
+const compress_images = require("compress-images");
 
-const VERSION = require('../package').version;
+let debugMode = true;
 
-program
-    .name('compress')
-    .version(VERSION, '    --version')
-    .option('-i, --input [input-dir]', 'Input directory [input-dir]', null)
-    .option('-o, --output [output-dir]', 'Output directory [output-dir]', null)
-    .option('-f, --force [true/false]', 'Force compress already compressed images', true)
-    .option('-p, --print [true/false]', 'Print stats when done', true)
-    .option('-ej, --enginejpg [jpegtran,mozjpeg,webp,guetzli,jpegRecompress,jpegoptim,tinify,imagemagick]', 'Engine for jpeg (use + to join multiple engine)', 'mozjpeg')
-    .option('-ep, --enginepng [pngquant,optipng,pngout,webp,pngcrush,tinify,imagemagick]', 'Engine for png (use + to join multiple engine)', 'pngquant')
-    .option('-es, --enginesvg [svgo,imagemagick]', 'Engine for svg (use + to join multiple engine)', 'svgo')
-    .option('-eg, --enginegif [gifsicle,giflossy,gif2webp,imagemagick]', 'Engine for gif (use + to join multiple engine)', 'gifsicle')
-    .parse(process.argv);
-
-if (process.argv.length < 4) {
-    return console.log('[-] 1Missing argument!\n[+] Usage: compress -i [input-directory] -o [output-directory]');
+function printDebug(msg) {
+    if (debugMode) console.log(msg);
 }
 
-let input = program.input;
-let output = program.output;
-console.log("Input: " + input, "Output: " + output);
-if (input === null || output === null) {
-    return console.log('[-] 2Missing argument!\n[+] Usage: compress -i [input-directory] -o [output-directory]');
-}
+const cli = meow(`
+	Usage:
+        $ compress
+    Options
+        --input, -i         Input directory (compulsory)
+        --output, -o        Output directory (compulsory)
+        --force, -f         Force compress already compressed images (default: true)
+        --debug, -d         Print debug message (default: true)
+        --print, -p         Print stats when done (default: true)
+        --enginejpg, -ej    Engine for jpeg (use + to join multiple engine) (default: mozjpeg)
+        --enginepng, -ep    Engine for png (use + to join multiple engine) (default: pngquant)
+        --enginesvg, -es    Engine for svg (use + to join multiple engine) (default: svgo)
+        --enginegif, -eg    Engine for gif (use + to join multiple engine) (default: gifsicle)
+
+        Engines for JPEG: [jpegtran,mozjpeg,webp,guetzli,jpegRecompress,jpegoptim,tinify,imagemagick]
+        Engines for PNG:  [pngquant,optipng,pngout,webp,pngcrush,tinify,imagemagick]
+        Engines for SVG:  [svgo,imagemagick]
+        Engines for GIF:  [gifsicle,giflossy,gif2webp,imagemagick]
+
+	Examples
+        $ compress --input "C:/MyPics/" --output "C:/MyPicsCompressed/"
+        # Compress all image in MyPics into MyPicsCompressed
+
+        $ compress --input "C:/MyPics/" --output "C:/MyPicsCompressed/" --force
+        # Compress all image in MyPics into MyPicsCompressed and force already compressed images
+
+        $ compress --input "C:/MyPics/" --output "C:/MyPicsCompressed/" -enginegif "gifsicle+giflossy"
+        # Compress all image in MyPics into MyPicsCompressed with gif engines of gifsicle and giflossy
+        …
+`, {
+        flags: {
+            input: {
+                type: "string",
+                alias: "i",
+            },
+            output: {
+                type: "string",
+                alias: "o",
+            },
+            force: {
+                type: "boolean",
+                alias: "f",
+                default: true
+            },
+            print: {
+                type: "boolean",
+                alias: "p",
+                default: true
+            },
+            debug: {
+                type: "boolean",
+                alias: "d",
+                default: true
+            },
+            enginejpg: {
+                type: "string",
+                default: "mozjpeg",
+                alias: "ej"
+            },
+            enginepng: {
+                type: "string",
+                alias: "ep",
+                default: "pngquant"
+            },
+            enginesvg: {
+                type: "string",
+                alias: "es",
+                default: "svgo"
+            },
+            enginegif: {
+                type: "string",
+                alias: "eg",
+                default: "gifsicle"
+            }
+        }
+    });
 
 
-let force = program.force;
-let print = program.print;
-let jpeg = program.enginejpg;
-let png = program.enginepng;
-let svg = program.enginesvg;
-let gif = program.enginegif;
+let { input, output, print, force, debug, enginejpg, enginepng, enginegif, enginesvg } = cli.flags;
+debugMode = debug;
 let options = {
     compress_force: force,
     statistic: print,
     autoupdate: false
 };
 
+printDebug("Input: " + input, "Output: " + output);
 input += "*.{jpg,JPG,jpeg,JPEG,png,svg,gif}";
-console.log(input, output);
+printDebug(input, output);
+
 new Promise((resolve, reject) => {
     return compress_images(input, output, options, false,
-        { jpg: { engine: jpeg, command: ['-quality', '60'] } },
-        { png: { engine: png, command: ['--quality=20-50'] } },
-        { svg: { engine: svg, command: '--multipass' } },
-        { gif: { engine: gif, command: ['--colors', '64', '--use-col=web'] } }, error => {
+        { jpg: { engine: enginejpg, command: ["-quality", "60"] } },
+        { png: { engine: enginepng, command: ["--quality=20-50"] } },
+        { svg: { engine: enginesvg, command: "--multipass" } },
+        { gif: { engine: enginegif, command: ["--colors", "64", "--use-col=web"] } }, error => {
             if (error) { return reject(error) };
             return resolve();
         });

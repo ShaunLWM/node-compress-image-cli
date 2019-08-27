@@ -22,17 +22,35 @@ $ compress -i C:/Users/Administrator/Desktop/1/ -o C:/Users/Administrator/Deskto
 Note: Please use forward slashes, *not* backslashes. Enclose the directory in apostrophe if needed (directory with spacing etc).
 
 ## Command Line Options
+```
+	Usage:
+        $ compress
+    Options
+        --input, -i         Input directory (compulsory)
+        --output, -o        Output directory (compulsory)
+        --force, -f         Force compress already compressed images (default: true)
+        --debug, -d         Print debug message (default: true)
+        --print, -p         Print stats when done (default: true)
+        --enginejpg, -ej    Engine for jpeg (use + to join multiple engine) (default: mozjpeg)
+        --enginepng, -ep    Engine for png (use + to join multiple engine) (default: pngquant)
+        --enginesvg, -es    Engine for svg (use + to join multiple engine) (default: svgo)
+        --enginegif, -eg    Engine for gif (use + to join multiple engine) (default: gifsicle)
 
-        --version           output the version number
-    -i, --input             input directory
-    -o, --output            output directory
-    -f, --force             Force compress compressed images
-    -p, --print             Print stats when done
-    -ej, --enginejpg        Type of engine to use for jpeg compression [jpegtran,mozjpeg,webp,guetzli,jpegRecompress,jpegoptim,tinify,imagemagick] (Use multiple with "+")
-    -ep, --enginepng        Type of engine to use for png compression [pngquant,optipng,pngout,webp,pngcrush,tinify,imagemagick] (Use multiple with "+")
-    -es, --enginesvg        Type of engine to use for svg compression [svgo,imagemagick] (Use multiple with "+")
-    -eg, --enginegif        Type of engine to use for gif compression [gifsicle,giflossy,gif2webp,imagemagick] (Use multiple with "+")
+        Engines for JPEG: [jpegtran,mozjpeg,webp,guetzli,jpegRecompress,jpegoptim,tinify,imagemagick]
+        Engines for PNG:  [pngquant,optipng,pngout,webp,pngcrush,tinify,imagemagick]
+        Engines for SVG:  [svgo,imagemagick]
+        Engines for GIF:  [gifsicle,giflossy,gif2webp,imagemagick]
 
+	Examples
+        $ compress --input "C:/MyPics/" --output "C:/MyPicsCompressed/"
+        # Compress all image in MyPics into MyPicsCompressed
+
+        $ compress --input "C:/MyPics/" --output "C:/MyPicsCompressed/" --force
+        # Compress all image in MyPics into MyPicsCompressed and force already compressed images
+
+        $ compress --input "C:/MyPics/" --output "C:/MyPicsCompressed/" -enginegif "gifsicle+giflossy"
+        # Compress all image in MyPics into MyPicsCompressed with gif engines of gifsicle and giflossy
+```
 ## Related
 
 - [compress-images](https://www.npmjs.com/package/compress-images) - API for this module

@@ -14,7 +14,7 @@
   ],
   "preferGlobal": true,
   "bin": {
-    "pump": "./bin/compress.js"
+    "compress": "./bin/compress.js"
   },
   "dependencies": {
     "compress-images": "^1.5.8"

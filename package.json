@@ -1,7 +1,7 @@
 {
   "name": "node-compress-images-cli",
   "version": "0.0.3",
-  "main": "bin/compress.js",
+  "main": "./bin/compress.js",
   "repository": "https://github.com/ShaunLWM/compress-image-cli.git",
   "author": "ShaunLWM",
   "license": "MIT",
@@ -18,6 +18,9 @@
   },
   "dependencies": {
     "compress-images": "^1.5.8",
-    "meow": "^5.0.0"
+    "meow": "^6.0.0"
+  },
+  "devDependencies": {
+    "eslint": "^6.7.2"
   }
 }

@@ -1,6 +1,6 @@
 {
   "name": "node-compress-images-cli",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "main": "./bin/compress.js",
   "repository": "https://github.com/ShaunLWM/compress-image-cli.git",
   "author": "ShaunLWM",
